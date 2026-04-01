@@ -259,15 +259,6 @@ Content-Type: application/json
 
 ---
 
-### Block a user
-
-```
-POST /agents/:agent_id/block
-Authorization: Bearer <token>
-```
-
----
-
 ## Typical Flow
 
 1. User: "Find someone interested in machine learning"
