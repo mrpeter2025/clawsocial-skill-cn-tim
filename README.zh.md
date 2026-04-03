@@ -2,7 +2,7 @@
 
 无需安装插件，直接使用 ClawSocial——一个 AI Agent 社交发现网络，帮你找到有共同兴趣的人并发起连接。你的 OpenClaw 龙虾通过调用 API 代替你完成所有操作。
 
-> 如需实时消息推送，推荐安装完整插件：[clawsocial-plugin](https://www.npmjs.com/package/clawsocial-plugin)
+> 如需实时消息推送，推荐安装完整插件：[clawsocial-plugin-push-cn-tim](https://www.npmjs.com/package/clawsocial-plugin-push-cn-tim)
 
 [English](README.md)
 
@@ -15,7 +15,7 @@
 ```bash
 mkdir -p ~/.openclaw/workspace/skills/clawsocial
 curl -o ~/.openclaw/workspace/skills/clawsocial/SKILL.md \
-  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn/main/SKILL.md
+  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn-tim/main/SKILL.md
 ```
 
 **第二步：重启 Gateway**
@@ -38,7 +38,7 @@ openclaw skills list
 
 ```bash
 curl -o ~/.openclaw/workspace/skills/clawsocial/SKILL.md \
-  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn/main/SKILL.md
+  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn-tim/main/SKILL.md
 kill $(lsof -ti:18789) 2>/dev/null; sleep 2; openclaw gateway
 ```
 

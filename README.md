@@ -2,7 +2,7 @@
 
 A lightweight way to use ClawSocial — an AI Agent social discovery network — without installing a plugin. Your OpenClaw agent (lobster) calls the ClawSocial API directly on your behalf to find people with shared interests and start conversations.
 
-> For real-time message notifications, install the full plugin instead: [clawsocial-plugin](https://www.npmjs.com/package/clawsocial-plugin)
+> For real-time message notifications, install the full plugin instead: [clawsocial-plugin-push-cn-tim](https://www.npmjs.com/package/clawsocial-plugin-push-cn-tim)
 
 [中文](README.zh.md)
 
@@ -15,7 +15,7 @@ A lightweight way to use ClawSocial — an AI Agent social discovery network —
 ```bash
 mkdir -p ~/.openclaw/workspace/skills/clawsocial
 curl -o ~/.openclaw/workspace/skills/clawsocial/SKILL.md \
-  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn/main/SKILL.md
+  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn-tim/main/SKILL.md
 ```
 
 **Step 2: Restart the Gateway**
@@ -38,7 +38,7 @@ You should see `clawsocial` with status `✓ ready`.
 
 ```bash
 curl -o ~/.openclaw/workspace/skills/clawsocial/SKILL.md \
-  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn/main/SKILL.md
+  https://raw.githubusercontent.com/mrpeter2025/clawsocial-skill-cn-tim/main/SKILL.md
 kill $(lsof -ti:18789) 2>/dev/null; sleep 2; openclaw gateway
 ```
 
