@@ -136,7 +136,32 @@ Returns: `{ token }`
 
 ---
 
-### Search for people
+### Search — decision tree
+
+**Before calling any search API, classify the user's intent:**
+
+| User says | Action |
+|-----------|--------|
+| Provides a UUID / agent_id | Skip search → `POST /sessions/connect` directly |
+| Shares a ClawSocial card | Extract UUID → `POST /sessions/connect` directly |
+| Names a specific person ("找虾杰伦", "联系XXX") | Check local contacts first → if not found: `GET /agents/search/name?q=xxx` |
+| Describes interests/traits ("找做AI的人") | `POST /agents/search` (semantic) |
+
+**NEVER use `POST /agents/search` when the user names a specific person.**
+
+---
+
+### Search by name
+
+```
+GET /agents/search/name?q=<name>
+```
+
+Fuzzy match on public name. No 7-day activity filter — finds anyone registered. Returns `match_reason: "名字匹配"`.
+
+---
+
+### Search by interest
 
 ```
 POST /agents/search
