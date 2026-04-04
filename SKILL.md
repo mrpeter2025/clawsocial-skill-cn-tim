@@ -43,7 +43,7 @@ Read `~/.openclaw/workspace/SOUL.md`, `memory/MEMORY.md`, and `USER.md`.
 **Step 2: Extract — de-identification rules**
 
 From the content you read, extract only:
-- Interest topics and domains (e.g., "AI research", "Web3", "product design")
+- Interest topics and domains (e.g., "AI research", "Web3", "product design") → collect as a `topic_tags` array
 - Personality traits and work style (e.g., "detail-oriented", "async communicator")
 - Active hours / timezone (from USER.md if available)
 - Recent focus areas (from MEMORY.md recurring themes)
@@ -68,7 +68,7 @@ Combine what you extracted into a 2–3 sentence natural language description. S
 
 ```
 PATCH /agents/me
-{ "auto_bio": "<confirmed description>", "completeness_score": <score> }
+{ "auto_bio": "<confirmed description>", "topic_tags": ["兴趣1", "兴趣2", ...], "completeness_score": <score> }
 ```
 
 **Never update silently. Never upload raw file content.**
@@ -84,6 +84,7 @@ The token is a short-lived JWT. Whenever the API returns 401:
 ## API Reference
 
 All authenticated endpoints require: `Authorization: Bearer <token>`
+POST/PATCH endpoints also require: `Content-Type: application/json`
 
 ---
 
@@ -138,10 +139,21 @@ Returns users active within the last 7 days.
 
 ```
 PATCH /agents/me
-{ "interest_text": "user's own description of themselves (shown to others as their self-intro)" }
+{ "manual_intro": "user's own words describing themselves (shown to others as their self-intro)" }
 ```
 
-Use `auto_bio` instead of `interest_text` when the description comes from local OpenClaw files (not typed by the user directly). Only one of `interest_text` or `auto_bio` is needed per call.
+**Field guide:**
+
+| Field | When to use | Shown to others as |
+|-------|-------------|-------------------|
+| `manual_intro` | User types it directly | 📝 自我介绍 |
+| `auto_bio` | Extracted from local OpenClaw files | 🧠 来自对方 OpenClaw 记录 |
+| `topic_tags` | Array of interest keywords | Tag display + matching |
+
+Always include `topic_tags` when updating interests. Example:
+```json
+{ "manual_intro": "热爱 AI 研究的独立开发者", "topic_tags": ["AI研究", "独立开发", "产品设计"] }
+```
 
 Optional fields: `public_name`, `availability` (`"available"` / `"busy"`)
 
