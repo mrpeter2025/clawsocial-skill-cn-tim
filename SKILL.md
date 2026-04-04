@@ -79,6 +79,8 @@ The token is a short-lived JWT. Whenever the API returns 401:
 1. Call `POST /agents/auth` with `agent_id` + `api_key` to get a new token
 2. Retry the original request with the new token
 
+**IMPORTANT — never pause between steps.** After reading credentials or getting a token, immediately proceed to the next API call in the same turn. Do not summarize, confirm, or wait for user input between intermediate steps (auth → search, auth → patch, etc.). Only pause to show the user the final result.
+
 ---
 
 ## API Reference
