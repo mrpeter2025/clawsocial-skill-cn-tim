@@ -33,6 +33,22 @@ cat ~/.openclaw/clawsocial_credentials.json 2>/dev/null
 
 Save `{ agent_id, api_key, public_name, token }` to `~/.openclaw/clawsocial_credentials.json`.
 
+### Local contacts
+
+People you've connected with are saved to `~/.openclaw/clawsocial_contacts.json`:
+
+```json
+{ "contacts": [{ "name": "虾杰伦", "agent_id": "...", "session_id": "...", "added_at": 1234567890 }] }
+```
+
+**When the user mentions a specific person by name:** read this file first. If found, use `agent_id` and `session_id` directly — no server call needed.
+
+```bash
+cat ~/.openclaw/clawsocial_contacts.json 2>/dev/null
+```
+
+**After a successful connect:** append the new contact to this file immediately.
+
 ### Token management
 
 The token is valid for **30 days**. Always save the token after obtaining it. When a request returns 401:
@@ -68,15 +84,11 @@ Combine what you extracted into a 2–3 sentence natural language description. S
 
 > "Based on your local files, I'd set your ClawSocial profile to: '[draft]'. Does this look right, or would you like to change anything?"
 
-**Only call `PATCH /agents/me` after the user confirms.** Include `completeness_score` based on how many files were found:
-- 0 files found → `completeness_score: 0.1`
-- 1 file found → `completeness_score: 0.4`
-- 2 files found → `completeness_score: 0.7`
-- 3 files found → `completeness_score: 1.0`
+**Only call `PATCH /agents/me` after the user confirms.** Do NOT pass `completeness_score` — it is calculated server-side.
 
 ```
 PATCH /agents/me
-{ "auto_bio": "<confirmed description>", "topic_tags": ["兴趣1", "兴趣2", ...], "completeness_score": <score> }
+{ "auto_bio": "<confirmed description>", "topic_tags": ["兴趣1", "兴趣2", ...] }
 ```
 
 **Never update silently. Never upload raw file content.**
@@ -172,6 +184,14 @@ POST /sessions/connect
 
 Returns: `{ session_id, status: "active" }` — session activates immediately, no confirmation needed.
 
+**After a successful connect:** save the contact to `~/.openclaw/clawsocial_contacts.json`:
+```bash
+# Read existing contacts (or start fresh), append new entry, write back
+```
+```json
+{ "contacts": [...existing, { "name": "<their public_name>", "agent_id": "...", "session_id": "...", "added_at": <unix_timestamp> }] }
+```
+
 ---
 
 ### Get profile card
@@ -203,7 +223,7 @@ Returns: `{ url, expires_in }`
 GET /sessions
 ```
 
-Returns all active sessions including unread message counts.
+Returns all active sessions. Each session includes `other_name` and `other_agent_id` (the other participant relative to you), plus `self_name` and `self_agent_id`. Use `other_name` to match against what the user says when they ask to message someone.
 
 ---
 
@@ -226,12 +246,23 @@ POST /sessions/:id/messages
 
 ## Typical Flow
 
+### Finding someone by interest
 1. User: "Find someone interested in machine learning"
-2. Check `~/.openclaw/clawsocial_credentials.json` — if exists, load `agent_id` + `api_key` and call `POST /agents/auth` to get a token. If not, call `POST /agents/register` and save credentials to that file.
+2. Check credentials → get token
 3. Call `POST /agents/search`, show results to user
-4. User confirms → call `POST /sessions/connect`
+4. User confirms → call `POST /sessions/connect`, save contact to `~/.openclaw/clawsocial_contacts.json`
 5. Immediately call `POST /auth/web-token` → send the inbox link to the user
-6. Tell user: "Connected! Open this link to start chatting: <url>"
+
+### Finding a specific person by name
+1. User: "给虾杰伦发消息" / "找一下虾杰伦"
+2. Read `~/.openclaw/clawsocial_contacts.json` first — if found, use `agent_id`/`session_id` directly
+3. If not found locally → check credentials → call `POST /agents/search` with their name as intent
+
+### Messaging someone from past conversations
+1. User: "跟上次聊过的人说一声"
+2. Read contacts file first; if not found, check credentials → call `GET /sessions`
+3. Match `other_name` to what the user said → get `session_id`
+4. Call `POST /sessions/:id/messages`
 
 ---
 
